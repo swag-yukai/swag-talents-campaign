@@ -74,10 +74,10 @@
         .title-section {
             text-align: center;
             width: 100%;
-            position: absolute; /* Center absolute to not be pushed by buttons */
+            position: absolute;
             top: 0;
             left: 0;
-            pointer-events: none; /* Let clicks pass through to buttons if overlap */
+            pointer-events: none;
         }
         
         h1 {
@@ -97,7 +97,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* Spacer for absolute header */
         .header-spacer { height: 80px; }
 
         /* --- 3. Info Cards (Rules) --- */
@@ -186,7 +185,7 @@
         }
 
         .tab-btn.active {
-            background: var(--bg-card); /* Lighter bg */
+            background: var(--bg-card);
             color: white;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
@@ -467,16 +466,15 @@
 
     /* --- 2. State Management --- */
     let currentLang = 'zh_TW';
-    let currentSort = 'vote'; // 'vote' or 'diamond'
+    let currentSort = 'vote';
     let rawData = [];
     const API_URL = "https://ranking-api-618647159770.asia-east1.run.app/api/rankings";
 
     /* --- 3. Initialization & API Fetch --- */
     document.addEventListener('DOMContentLoaded', () => {
-        setLanguage('zh_TW'); // Default
+        setLanguage('zh_TW');
         fetchData();
 
-        // Bind Search Event
         document.getElementById('search-input').addEventListener('input', () => {
             renderList();
         });
@@ -486,7 +484,6 @@
         const resultContainer = document.getElementById('result-container');
         
         try {
-            // Integration Logic: credentials: 'omit'
             const response = await fetch(API_URL, {
                 method: 'GET',
                 credentials: 'omit',
@@ -500,13 +497,11 @@
             }
 
             const data = await response.json();
-            // Assuming data is an array. If it's wrapped (e.g. { data: [...] }), adjust here.
             rawData = Array.isArray(data) ? data : (data.data || []);
             
-            // Mocking data properties if API returns different keys (Robustness)
-            // Expecting: username, vote_rank, diamond_rank, vote_score, diamond_score
-            // If the API is strictly defined, this step sanitizes it.
-            
+            // --- Debug: 在 Console 顯示 API 回傳的資料結構，方便除錯 ---
+            console.log("API Data Loaded:", rawData);
+
             renderList();
 
         } catch (error) {
@@ -531,16 +526,13 @@
         currentLang = lang;
         const t = TRANSLATIONS[lang];
 
-        // Update Buttons
         document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-        // Find button with specific onclick and add active (simple match)
         const btns = document.querySelectorAll('.lang-btn');
         if(lang === 'zh_TW') btns[0].classList.add('active');
         if(lang === 'zh_CN') btns[1].classList.add('active');
         if(lang === 'en') btns[2].classList.add('active');
         if(lang === 'ja') btns[3].classList.add('active');
 
-        // Update Text
         document.getElementById('page-title').textContent = t.title;
         document.getElementById('date-display').textContent = t.date;
         
@@ -562,17 +554,13 @@
         document.getElementById('tab-vote').textContent = t.tab_vote;
         document.getElementById('tab-diamond').textContent = t.tab_diamond;
         
-        // Re-render list to update labels inside the list
         if(rawData.length > 0) renderList();
     }
 
     function setSortMode(mode) {
         currentSort = mode;
-        
-        // Update Tabs
         document.getElementById('tab-vote').classList.toggle('active', mode === 'vote');
         document.getElementById('tab-diamond').classList.toggle('active', mode === 'diamond');
-
         renderList();
     }
 
@@ -581,25 +569,19 @@
         const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
         const t = TRANSLATIONS[currentLang];
 
-        // 1. Filter
         let displayData = rawData.filter(item => {
-            // Safe check for username property
             const name = item.username || item.name || "Unknown"; 
             return name.toLowerCase().includes(searchTerm);
         });
 
-        // 2. Sort
         displayData.sort((a, b) => {
             if (currentSort === 'vote') {
-                // Assuming lower rank number is better (1st, 2nd...)
-                // Or sort by count descending if rank isn't pre-calculated
                 return (a.vote_rank || 9999) - (b.vote_rank || 9999);
             } else {
                 return (a.diamond_rank || 9999) - (b.diamond_rank || 9999);
             }
         });
 
-        // 3. Render HTML
         if (displayData.length === 0) {
             container.innerHTML = `<div class="empty-state">${t.empty_search}</div>`;
             return;
@@ -607,14 +589,19 @@
 
         let html = '<div class="ranking-list">';
         displayData.forEach(item => {
-            // Determine which rank to display based on mode
             const rank = currentSort === 'vote' ? item.vote_rank : item.diamond_rank;
-            const score = currentSort === 'vote' ? item.vote_count : item.diamond_count; // Assuming API returns counts
+            
+            // --- FIX START: Update property names based on user feedback ---
+            // Previous: item.vote_count, item.diamond_count
+            // New: item.total_votes, item.total_spending_diamonds
+            const score = currentSort === 'vote' ? item.total_votes : item.total_spending_diamonds; 
+            // --- FIX END ---
+            
             const scoreLabel = currentSort === 'vote' ? t.score_vote : t.score_diamond;
             const name = item.username || "User";
 
-            // Fallback if score is missing
-            const finalScore = score !== undefined ? score.toLocaleString() : '-';
+            // If score is undefined or null, show 0 (or keep '-' if you prefer to show no data)
+            const finalScore = (score !== undefined && score !== null) ? score.toLocaleString() : '0';
 
             html += `
                 <div class="rank-item" data-rank="${rank}">
