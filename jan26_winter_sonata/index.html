@@ -1,1 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winter Sonata Campaign</title>
+    <style>
+        /* --- 1. Global Reset & Winter Theme Variables --- */
+        :root {
+            --bg-dark: #0f172a; /* Deep Slate Blue */
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --bg-card-hover: rgba(51, 65, 85, 0.8);
+            
+            --primary: #38bdf8; /* Sky Blue */
+            --accent: #c084fc;  /* Purple for magic/raffle */
+            --text-main: #f1f5f9; /* Off-white */
+            --text-muted: #94a3b8;
+            
+            --border: rgba(148, 163, 184, 0.2);
+            --glass: blur(12px);
+            
+            --rank-1: #fbbf24; /* Gold */
+            --rank-2: #e2e8f0; /* Silver/Ice */
+            --rank-3: #b45309; /* Bronze */
+            
+            --raffle-active: #22c55e; /* Green for eligible */
+            --raffle-inactive: #475569;
+        }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        
+        body {
+            background-color: var(--bg-dark);
+            /* Winter Gradient Background */
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(192, 132, 252, 0.1) 0%, transparent 40%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- 2. Header --- */
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+            text-align: center;
+        }
+
+        .lang-switch {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            gap: 6px;
+        }
+
+        .lang-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active, .lang-btn:hover {
+            background: var(--primary);
+            color: #0f172a;
+            border-color: var(--primary);
+            font-weight: bold;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            /* Icy Text Gradient */
+            background: linear-gradient(to right, #e0f2fe, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            text-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- 3. Info Cards (Rules) --- */
+        .rules-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .rule-card {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Subtle shine effect on cards */
+        .rule-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+            opacity: 0.5;
+        }
+
+        .rule-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rule-list {
+            list-style: none;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        .rule-list li { 
+            display: flex; 
+            justify-content: space-between;
+            border-bottom: 1px dashed rgba(255,255,255,0.05);
+            padding-bottom: 4px;
+            margin-bottom: 6px;
+        }
+        .rule-list li:last-child { border-bottom: none; }
+        
+        .highlight { color: #fff; font-weight: 600; }
+        .raffle-badge { color: var(--accent); font-weight: bold; }
+
+        /* --- 4. Controls (Search) --- */
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            padding: 14px 20px;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .search-input:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+
+        /* --- 5. Ranking List --- */
+        .ranking-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .rank-item {
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 15px 20px;
+            border-radius: 14px;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .rank-item:hover {
+            transform: translateY(-2px);
+            background: var(--bg-card-hover);
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+
+        .rank-number {
+            font-size: 1.6rem;
+            font-weight: 900;
+            width: 50px;
+            text-align: center;
+            margin-right: 15px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Top 3 Styling */
+        .rank-item[data-rank="1"] .rank-number { color: var(--rank-1); text-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
+        .rank-item[data-rank="2"] .rank-number { color: var(--rank-2); text-shadow: 0 0 15px rgba(226, 232, 240, 0.4); }
+        .rank-item[data-rank="3"] .rank-number { color: var(--rank-3); text-shadow: 0 0 15px rgba(180, 83, 9, 0.4); }
+
+        .rank-item[data-rank="1"] { background: linear-gradient(90deg, rgba(251,191,36,0.1), transparent); border-color: rgba(251, 191, 36, 0.3); }
+
+        .user-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .raffle-status {
+            font-size: 0.75rem;
+            margin-top: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            width: fit-content;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-muted);
+        }
+
+        .raffle-status.eligible {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80; /* Bright Green */
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .score-display {
+            text-align: right;
+            min-width: 100px;
+        }
+
+        .score-val {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+
+        .score-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: block;
+            margin-top: 2px;
+        }
+
+        /* --- 6. States --- */
+        .loading, .error-msg, .empty-state { text-align: center; padding: 40px; color: var(--text-muted); }
+        .error-msg { color: #f87171; background: rgba(248, 113, 113, 0.1); border-radius: 10px; }
+        
+        .spinner {
+            width: 30px; height: 30px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            .rules-container { grid-template-columns: 1fr; }
+            .lang-switch { position: relative; justify-content: flex-end; width: 100%; margin-bottom: 10px; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="lang-switch">
+            <button class="lang-btn active" onclick="setLanguage('zh_TW')">繁體</button>
+            <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+        </div>
+        <h1 id="page-title">❄️ 冬季戀歌</h1>
+        <div class="subtitle" id="page-subtitle">冬季限定禮物排名爭奪戰</div>
+    </header>
+
+    <div class="rules-container">
+        <div class="rule-card">
+            <div class="rule-title">
+                <span>🏆 排行榜獎勵</span>
+            </div>
+            <ul class="rule-list" id="rank-rewards-list">
+                </ul>
+        </div>
+        
+        <div class="rule-card">
+            <div class="rule-title">
+                <span>🎟️ 加碼抽獎</span>
+            </div>
+            <ul class="rule-list">
+                <li>
+                    <span id="raffle-cond-label">抽獎門檻</span>
+                    <span class="highlight">300,000 💎</span>
+                </li>
+                <li style="margin-top: 10px; display: block;">
+                    <span id="raffle-desc">活動期間累積「冬季戀歌」系列禮物達標即可獲得資格。</span>
+                </li>
+                <li style="border-top: 1px solid rgba(255,255,255,0.1); margin-top:10px; padding-top:10px;">
+                    <span class="raffle-badge" id="raffle-prize">🎁 抽出 5 名送 50,000 💎</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="search-input" class="search-input" placeholder="搜尋主播名稱...">
+    </div>
+
+    <div id="result-container">
+        <div class="loading">
+            <div class="spinner"></div>
+            <p id="loading-text">正在讀取冬季數據...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    /**
+     * Configuration & Translations
+     */
+    const API_URL = "https://campaign-api-618647159770.asia-east1.run.app/api/campaigns/jan26_winter_sonata";
+    
+    const TRANSLATIONS = {
+        zh_TW: {
+            title: "❄️ 冬季戀歌",
+            subtitle: "冬季限定禮物排名爭奪戰",
+            rank_title: "🏆 排行榜獎勵",
+            raffle_title: "🎟️ 加碼抽獎",
+            rewards: [
+                { rank: "第 1 名", val: "699,999 💎" },
+                { rank: "第 2 名", val: "579,999 💎" },
+                { rank: "第 3 名", val: "459,999 💎" },
+                { rank: "第 4 名", val: "389,999 💎" },
+                { rank: "第 5 名", val: "299,999 💎" },
+                { rank: "第 6-7 名", val: "149,999 💎" },
+                { rank: "第 8-10 名", val: "99,999 💎" }
+            ],
+            raffle_cond: "抽獎門檻",
+            raffle_desc: "累積「冬季戀歌」系列禮物達標即可獲得資格。",
+            raffle_prize: "🎁 抽出 5 名送 50,000 💎",
+            search_placeholder: "搜尋主播名稱...",
+            loading: "正在讀取冬季數據...",
+            empty_search: "找不到符合條件的主播",
+            score_unit: "鑽石",
+            eligible_text: "🎟️ 已獲抽獎資格",
+            not_eligible_text: "未達標"
+        },
+        en: {
+            title: "❄️ Winter Sonata",
+            subtitle: "Winter Series Gift Ranking",
+            rank_title: "🏆 Leaderboard Rewards",
+            raffle_title: "🎟️ Bonus Raffle",
+            rewards: [
+                { rank: "1st", val: "699,999 💎" },
+                { rank: "2nd", val: "579,999 💎" },
+                { rank: "3rd", val: "459,999 💎" },
+                { rank: "4th", val: "389,999 💎" },
+                { rank: "5th", val: "299,999 💎" },
+                { rank: "6th-7th", val: "149,999 💎" },
+                { rank: "8th-10th", val: "99,999 💎" }
+            ],
+            raffle_cond: "Requirement",
+            raffle_desc: "Collect 300,000+ diamonds from Winter gifts.",
+            raffle_prize: "🎁 5 Winners get 50,000 💎",
+            search_placeholder: "Search username...",
+            loading: "Loading winter data...",
+            empty_search: "No streamers found.",
+            score_unit: "Diamonds",
+            eligible_text: "🎟️ Raffle Qualified",
+            not_eligible_text: "In Progress"
+        }
+    };
+
+    let currentLang = 'zh_TW';
+    let rawData = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        setLanguage('zh_TW');
+        fetchData();
+        
+        document.getElementById('search-input').addEventListener('input', () => {
+            renderList();
+        });
+    });
+
+    // 1. Fetch Data
+    async function fetchData() {
+        const resultContainer = document.getElementById('result-container');
+        try {
+            // Using timestamp to prevent caching issues for real-time updates
+            const response = await fetch(`${API_URL}?t=${new Date().getTime()}`, {
+                method: 'GET',
+                credentials: 'omit', // Crucial for cross-origin iframes
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (!response.ok) throw new Error("Network response was not ok");
+            
+            // Assuming API returns array directly or { data: [] }
+            const json = await response.json();
+            rawData = Array.isArray(json) ? json : (json.data || []);
+            
+            // Sort by diamond_rank ascending (1, 2, 3...)
+            rawData.sort((a, b) => a.diamond_rank - b.diamond_rank);
+
+            renderList();
+
+        } catch (error) {
+            console.error(error);
+            resultContainer.innerHTML = `
+                <div class="error-msg">
+                    <h3>無法讀取數據</h3>
+                    <p>請稍後再試或檢查網路連線。</p>
+                </div>
+            `;
+        }
+    }
+
+    // 2. Render UI
+    function renderList() {
+        const container = document.getElementById('result-container');
+        const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+        const t = TRANSLATIONS[currentLang];
+
+        // Filter
+        const displayData = rawData.filter(item => {
+            return (item.username || "").toLowerCase().includes(searchTerm);
+        });
+
+        if (displayData.length === 0) {
+            container.innerHTML = `<div class="empty-state">${t.empty_search}</div>`;
+            return;
+        }
+
+        let html = '<div class="ranking-list">';
+        
+        displayData.forEach(item => {
+            // Format numbers (e.g. 3217940 -> 3,217,940)
+            const score = item.total_diamonds ? item.total_diamonds.toLocaleString() : "0";
+            
+            // Raffle Logic
+            const isEligible = item.is_raffle_eligible === true;
+            const raffleClass = isEligible ? "eligible" : "";
+            const raffleText = isEligible ? t.eligible_text : t.not_eligible_text;
+
+            html += `
+                <div class="rank-item" data-rank="${item.diamond_rank}">
+                    <div class="rank-number">${item.diamond_rank}</div>
+                    <div class="user-info">
+                        <span class="username">${item.username}</span>
+                        <span class="raffle-status ${raffleClass}">
+                            ${raffleText}
+                        </span>
+                    </div>
+                    <div class="score-display">
+                        <div class="score-val">${score}</div>
+                        <span class="score-label">${t.score_unit}</span>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    // 3. Language Switcher
+    function setLanguage(lang) {
+        currentLang = lang;
+        const t = TRANSLATIONS[lang];
+
+        // UI Text Updates
+        document.getElementById('page-title').textContent = t.title;
+        document.getElementById('page-subtitle').textContent = t.subtitle;
+        document.getElementById('search-input').placeholder = t.search_placeholder;
+        document.getElementById('loading-text').textContent = t.loading;
+        
+        // Render Rewards List
+        const rewardsContainer = document.getElementById('rank-rewards-list');
+        rewardsContainer.innerHTML = t.rewards.map(r => `
+            <li><span>${r.rank}</span> <span class="highlight">${r.val}</span></li>
+        `).join('');
+
+        // Raffle Text
+        document.querySelector('.rule-card:nth-child(2) .rule-title span').textContent = t.raffle_title;
+        document.querySelector('.rule-card:nth-child(1) .rule-title span').textContent = t.rank_title;
+        document.getElementById('raffle-cond-label').textContent = t.raffle_cond;
+        document.getElementById('raffle-desc').textContent = t.raffle_desc;
+        document.getElementById('raffle-prize').textContent = t.raffle_prize;
+
+        // Button State
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+        if (lang === 'zh_TW') document.querySelector('button[onclick="setLanguage(\'zh_TW\')"]').classList.add('active');
+        if (lang === 'en') document.querySelector('button[onclick="setLanguage(\'en\')"]').classList.add('active');
+
+        // Re-render list to update "Qualified" text
+        if (rawData.length > 0) renderList();
+    }
+</script>
+
+</body>
+</html>
