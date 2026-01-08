@@ -1,1 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 Campaign Leaderboard</title>
+    <style>
+        /* --- 1. Global Reset & Variables --- */
+        :root {
+            --bg-dark: #0a0b10;
+            --bg-card: rgba(30, 32, 45, 0.7);
+            --bg-card-hover: rgba(40, 42, 60, 0.9);
+            --primary: #6366f1; /* Indigo */
+            --accent: #ec4899;  /* Pink */
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --glass: blur(12px);
+            
+            --rank-1: #fbbf24; /* Gold */
+            --rank-2: #94a3b8; /* Silver */
+            --rank-3: #b45309; /* Bronze */
+        }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        
+        body {
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 20%),
+                              radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 20%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- 2. Header & Language Switcher --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .lang-switch {
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .lang-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active, .lang-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .title-section {
+            text-align: center;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            text-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .date-range {
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .header-spacer { height: 80px; }
+
+        /* --- 3. Info Cards (Rules) --- */
+        .rules-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .rule-card {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .rule-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rule-list {
+            list-style: none;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .rule-list li { margin-bottom: 6px; }
+        .highlight { color: #fff; font-weight: 600; }
+
+        /* --- 4. Controls (Filter & Sort) --- */
+        .controls {
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            padding: 12px 15px;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus { border-color: var(--primary); }
+
+        .tabs {
+            display: flex;
+            background: rgba(0,0,0,0.3);
+            padding: 4px;
+            border-radius: 10px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--bg-card);
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        /* --- 5. Ranking List --- */
+        .ranking-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .rank-item {
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 15px 20px;
+            border-radius: 14px;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .rank-item:hover {
+            transform: translateY(-2px);
+            background: var(--bg-card-hover);
+        }
+
+        .rank-number {
+            font-size: 1.5rem;
+            font-weight: 900;
+            width: 50px;
+            text-align: center;
+            margin-right: 15px;
+            color: var(--text-muted);
+        }
+
+        /* Top 3 Styling */
+        .rank-item[data-rank="1"] .rank-number { color: var(--rank-1); text-shadow: 0 0 10px rgba(251, 191, 36, 0.4); }
+        .rank-item[data-rank="2"] .rank-number { color: var(--rank-2); }
+        .rank-item[data-rank="3"] .rank-number { color: var(--rank-3); }
+
+        .rank-item[data-rank="1"] { border-color: rgba(251, 191, 36, 0.3); background: linear-gradient(90deg, rgba(251,191,36,0.05), transparent); }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .username {
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: block;
+        }
+
+        .stats {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .score-display {
+            text-align: right;
+        }
+
+        .score-val {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .score-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        /* --- 6. States & Error --- */
+        .loading, .error-msg, .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+        
+        .error-msg { color: #ef4444; background: rgba(239, 68, 68, 0.1); border-radius: 10px; }
+        .debug-info { font-family: monospace; font-size: 0.75rem; margin-top: 10px; opacity: 0.8; word-break: break-all;}
+
+        .spinner {
+            width: 30px; height: 30px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .rules-container { grid-template-columns: 1fr; }
+            .title-section { position: relative; margin-top: 10px; }
+            header { flex-direction: column-reverse; align-items: flex-end; }
+            .header-spacer { display: none; }
+            .lang-switch { width: 100%; justify-content: center; margin-bottom: 10px;}
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="title-section">
+            <h1 id="page-title">Loading...</h1>
+            <div class="date-range" id="date-display">Loading...</div>
+        </div>
+        <div class="lang-switch">
+            <button class="lang-btn active" onclick="setLanguage('zh_TW')">繁體</button>
+            <button class="lang-btn" onclick="setLanguage('zh_CN')">简体</button>
+            <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+            <button class="lang-btn" onclick="setLanguage('ja')">日本語</button>
+        </div>
+    </header>
+    <div class="header-spacer"></div>
+
+    <div class="rules-container">
+        <div class="rule-card">
+            <div class="rule-title">
+                <span id="vote-rule-title">Vote Ranking</span>
+            </div>
+            <ul class="rule-list">
+                <li id="vote-desc-1">1 Gift = 1 Vote</li>
+                <li id="vote-desc-2">Max 3 votes per user</li>
+                <li class="highlight" style="margin-top:8px;">Rewards:</li>
+                <li id="vote-reward-1">1st: $10,000</li>
+                <li id="vote-reward-2">2nd: $5,000</li>
+                <li id="vote-reward-3">3rd: $3,000</li>
+            </ul>
+        </div>
+        
+        <div class="rule-card">
+            <div class="rule-title">
+                <span id="diamond-rule-title">Diamond Ranking</span>
+            </div>
+            <ul class="rule-list">
+                <li id="diamond-desc-1">Total diamond value</li>
+                <li id="diamond-desc-2">Based on gifts received</li>
+                <li class="highlight" style="margin-top:8px;">Rewards (Bonus):</li>
+                <li id="diamond-reward-1">1st: +5%</li>
+                <li id="diamond-reward-2">2nd: +3%</li>
+                <li id="diamond-reward-3">3rd: +1%</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="search-box">
+            <input type="text" id="search-input" class="search-input" placeholder="Search username...">
+        </div>
+        <div class="tabs">
+            <button class="tab-btn active" id="tab-vote" onclick="setSortMode('vote')">Vote Rank</button>
+            <button class="tab-btn" id="tab-diamond" onclick="setSortMode('diamond')">Diamond Rank</button>
+        </div>
+    </div>
+
+    <div id="result-container">
+        <div class="loading">
+            <div class="spinner"></div>
+            <p id="loading-text">Loading Data...</p>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    /**
+     * 1. Translations Configuration
+     */
+    const TRANSLATIONS = {
+        zh_TW: {
+            title: "2026 年度盛典",
+            date: "台北時間 2026/1/4 - 2026/1/5",
+            vote_title: "🔥 投票排名",
+            vote_desc_1: "主播每收到一個禮物視為一票",
+            vote_desc_2: "同一用戶僅限支持三票",
+            vote_rw_1: "第一名：NT$ 10,000",
+            vote_rw_2: "第二名：NT$ 5,000",
+            vote_rw_3: "第三名：NT$ 3,000",
+            diamond_title: "💎 鑽石排名",
+            diamond_desc_1: "收到禮物的總鑽石排行",
+            diamond_desc_2: "累積無上限",
+            diamond_rw_1: "第一名：鑽石加碼 5%",
+            diamond_rw_2: "第二名：鑽石加碼 3%",
+            diamond_rw_3: "第三名：鑽石加碼 1%",
+            search_placeholder: "搜尋主播名稱...",
+            tab_vote: "投票榜",
+            tab_diamond: "鑽石榜",
+            loading: "資料載入中...",
+            error_title: "發生錯誤",
+            error_desc: "無法取得排名資料，請稍後再試。",
+            empty_search: "找不到符合條件的主播",
+            score_vote: "票",
+            score_diamond: "鑽石"
+        },
+        zh_CN: {
+            title: "2026 年度盛典",
+            date: "台北时间 2026/1/4 - 2026/1/5",
+            vote_title: "🔥 投票排名",
+            vote_desc_1: "主播每收到一个礼物视为一票",
+            vote_desc_2: "同一用户仅限支持三票",
+            vote_rw_1: "第一名：NT$ 10,000",
+            vote_rw_2: "第二名：NT$ 5,000",
+            vote_rw_3: "第三名：NT$ 3,000",
+            diamond_title: "💎 钻石排名",
+            diamond_desc_1: "收到礼物的总钻石排行",
+            diamond_desc_2: "累积无上限",
+            diamond_rw_1: "第一名：钻石加码 5%",
+            diamond_rw_2: "第二名：钻石加码 3%",
+            diamond_rw_3: "第三名：钻石加码 1%",
+            search_placeholder: "搜寻主播名称...",
+            tab_vote: "投票榜",
+            tab_diamond: "钻石榜",
+            loading: "资料加载中...",
+            error_title: "发生错误",
+            error_desc: "无法获取排名资料，请稍后再试。",
+            empty_search: "找不到符合条件的主播",
+            score_vote: "票",
+            score_diamond: "钻石"
+        },
+        en: {
+            title: "2026 Grand Gala",
+            date: "Taipei Time 2026/1/4 - 2026/1/5",
+            vote_title: "🔥 Vote Ranking",
+            vote_desc_1: "1 Gift = 1 Vote",
+            vote_desc_2: "Max 3 votes per user",
+            vote_rw_1: "1st: NT$ 10,000",
+            vote_rw_2: "2nd: NT$ 5,000",
+            vote_rw_3: "3rd: NT$ 3,000",
+            diamond_title: "💎 Diamond Ranking",
+            diamond_desc_1: "Total diamond value of gifts",
+            diamond_desc_2: "No accumulation limit",
+            diamond_rw_1: "1st: +5% Bonus",
+            diamond_rw_2: "2nd: +3% Bonus",
+            diamond_rw_3: "3rd: +1% Bonus",
+            search_placeholder: "Search username...",
+            tab_vote: "Vote Rank",
+            tab_diamond: "Diamond Rank",
+            loading: "Loading data...",
+            error_title: "Error Occurred",
+            error_desc: "Unable to fetch ranking data.",
+            empty_search: "No streamers found.",
+            score_vote: "Votes",
+            score_diamond: "Diamonds"
+        },
+        ja: {
+            title: "2026 グランドガラ",
+            date: "台北時間 2026/1/4 - 2026/1/5",
+            vote_title: "🔥 投票ランキング",
+            vote_desc_1: "ギフト1つにつき1票",
+            vote_desc_2: "1ユーザーにつき最大3票まで",
+            vote_rw_1: "1位：NT$ 10,000",
+            vote_rw_2: "2位：NT$ 5,000",
+            vote_rw_3: "3位：NT$ 3,000",
+            diamond_title: "💎 ダイヤランキング",
+            diamond_desc_1: "獲得ギフトの総ダイヤ数",
+            diamond_desc_2: "累積上限なし",
+            diamond_rw_1: "1位：ダイヤ +5%",
+            diamond_rw_2: "2位：ダイヤ +3%",
+            diamond_rw_3: "3位：ダイヤ +1%",
+            search_placeholder: "ユーザー名を検索...",
+            tab_vote: "投票順",
+            tab_diamond: "ダイヤ順",
+            loading: "読み込み中...",
+            error_title: "エラーが発生しました",
+            error_desc: "ランキングデータを取得できませんでした。",
+            empty_search: "ユーザーが見つかりません",
+            score_vote: "票",
+            score_diamond: "ダイヤ"
+        }
+    };
+
+    /* --- 2. State Management --- */
+    let currentLang = 'zh_TW';
+    let currentSort = 'vote';
+    let rawData = [];
+    const API_URL = "https://ranking-api-618647159770.asia-east1.run.app/api/rankings";
+
+    /* --- 3. Initialization & API Fetch --- */
+    document.addEventListener('DOMContentLoaded', () => {
+        setLanguage('zh_TW');
+        fetchData();
+
+        document.getElementById('search-input').addEventListener('input', () => {
+            renderList();
+        });
+    });
+
+    async function fetchData() {
+        const resultContainer = document.getElementById('result-container');
+        
+        try {
+            const response = await fetch(API_URL, {
+                method: 'GET',
+                credentials: 'omit',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            rawData = Array.isArray(data) ? data : (data.data || []);
+            
+            // --- Debug: 在 Console 顯示 API 回傳的資料結構，方便除錯 ---
+            console.log("API Data Loaded:", rawData);
+
+            renderList();
+
+        } catch (error) {
+            console.error("API Error:", error);
+            showError(error);
+        }
+    }
+
+    function showError(error) {
+        const t = TRANSLATIONS[currentLang];
+        document.getElementById('result-container').innerHTML = `
+            <div class="error-msg">
+                <h3>${t.error_title}</h3>
+                <p>${t.error_desc}</p>
+                <div class="debug-info">Details: ${error.message}</div>
+            </div>
+        `;
+    }
+
+    /* --- 4. Logic & Rendering --- */
+    function setLanguage(lang) {
+        currentLang = lang;
+        const t = TRANSLATIONS[lang];
+
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+        const btns = document.querySelectorAll('.lang-btn');
+        if(lang === 'zh_TW') btns[0].classList.add('active');
+        if(lang === 'zh_CN') btns[1].classList.add('active');
+        if(lang === 'en') btns[2].classList.add('active');
+        if(lang === 'ja') btns[3].classList.add('active');
+
+        document.getElementById('page-title').textContent = t.title;
+        document.getElementById('date-display').textContent = t.date;
+        
+        document.getElementById('vote-rule-title').textContent = t.vote_title;
+        document.getElementById('vote-desc-1').textContent = t.vote_desc_1;
+        document.getElementById('vote-desc-2').textContent = t.vote_desc_2;
+        document.getElementById('vote-reward-1').textContent = t.vote_rw_1;
+        document.getElementById('vote-reward-2').textContent = t.vote_rw_2;
+        document.getElementById('vote-reward-3').textContent = t.vote_rw_3;
+
+        document.getElementById('diamond-rule-title').textContent = t.diamond_title;
+        document.getElementById('diamond-desc-1').textContent = t.diamond_desc_1;
+        document.getElementById('diamond-desc-2').textContent = t.diamond_desc_2;
+        document.getElementById('diamond-reward-1').textContent = t.diamond_rw_1;
+        document.getElementById('diamond-reward-2').textContent = t.diamond_rw_2;
+        document.getElementById('diamond-reward-3').textContent = t.diamond_rw_3;
+
+        document.getElementById('search-input').placeholder = t.search_placeholder;
+        document.getElementById('tab-vote').textContent = t.tab_vote;
+        document.getElementById('tab-diamond').textContent = t.tab_diamond;
+        
+        if(rawData.length > 0) renderList();
+    }
+
+    function setSortMode(mode) {
+        currentSort = mode;
+        document.getElementById('tab-vote').classList.toggle('active', mode === 'vote');
+        document.getElementById('tab-diamond').classList.toggle('active', mode === 'diamond');
+        renderList();
+    }
+
+    function renderList() {
+        const container = document.getElementById('result-container');
+        const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+        const t = TRANSLATIONS[currentLang];
+
+        let displayData = rawData.filter(item => {
+            const name = item.username || item.name || "Unknown"; 
+            return name.toLowerCase().includes(searchTerm);
+        });
+
+        displayData.sort((a, b) => {
+            if (currentSort === 'vote') {
+                return (a.vote_rank || 9999) - (b.vote_rank || 9999);
+            } else {
+                return (a.diamond_rank || 9999) - (b.diamond_rank || 9999);
+            }
+        });
+
+        if (displayData.length === 0) {
+            container.innerHTML = `<div class="empty-state">${t.empty_search}</div>`;
+            return;
+        }
+
+        let html = '<div class="ranking-list">';
+        displayData.forEach(item => {
+            const rank = currentSort === 'vote' ? item.vote_rank : item.diamond_rank;
+            
+            // --- FIX START: Update property names based on user feedback ---
+            // Previous: item.vote_count, item.diamond_count
+            // New: item.total_votes, item.total_spending_diamonds
+            const score = currentSort === 'vote' ? item.total_votes : item.total_spending_diamonds; 
+            // --- FIX END ---
+            
+            const scoreLabel = currentSort === 'vote' ? t.score_vote : t.score_diamond;
+            const name = item.username || "User";
+
+            // If score is undefined or null, show 0 (or keep '-' if you prefer to show no data)
+            const finalScore = (score !== undefined && score !== null) ? score.toLocaleString() : '0';
+
+            html += `
+                <div class="rank-item" data-rank="${rank}">
+                    <div class="rank-number">${rank}</div>
+                    <div class="user-info">
+                        <span class="username">${name}</span>
+                    </div>
+                    <div class="score-display">
+                        <div class="score-val">${finalScore}</div>
+                        <span class="score-label">${scoreLabel}</span>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        
+        container.innerHTML = html;
+    }
+</script>
+
+</body>
+</html>
