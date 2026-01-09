@@ -470,8 +470,9 @@
         const day = String(lastUpdatedTime.getDate()).padStart(2, '0');
         const hours = String(lastUpdatedTime.getHours()).padStart(2, '0');
         const minutes = String(lastUpdatedTime.getMinutes()).padStart(2, '0');
+        const seconds = String(lastUpdatedTime.getSeconds()).padStart(2, '0');
 
-        const timeString = `${year}/${month}/${day} ${hours}:${minutes}`;
+        const timeString = `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
         
         document.getElementById('last-updated-display').textContent = `${t.last_updated_prefix}: ${timeString}`;
     }
