@@ -1,1 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Campaign 2026</title>
+    <style>
+        /* --- 1. Global Reset & Valentine Theme Variables --- */
+        :root {
+            --bg-dark: #2a0a12; /* Deep Burgundy */
+            --bg-card: rgba(60, 20, 30, 0.7);
+            --bg-card-hover: rgba(80, 30, 40, 0.8);
+            
+            --primary: #fb7185; /* Rose Pink */
+            --accent: #f43f5e;  /* Hot Pink/Red */
+            --tab-active-bg: linear-gradient(135deg, #f43f5e, #e11d48);
+            
+            --text-main: #ffe4e6; /* Pale Pink */
+            --text-muted: #fda4af;
+            
+            --border: rgba(251, 113, 133, 0.2);
+            --glass: blur(12px);
+            
+            --rank-1: #fbbf24; /* Gold */
+            --rank-2: #e2e8f0; /* Silver */
+            --rank-3: #b45309; /* Bronze */
+        }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(244, 63, 94, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(225, 29, 72, 0.15) 0%, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- 2. Header --- */
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 25px;
+            position: relative;
+            text-align: center;
+        }
+
+        .lang-switch {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            gap: 6px;
+        }
+
+        .lang-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active, .lang-btn:hover {
+            background: var(--primary);
+            color: #4a0404;
+            border-color: var(--primary);
+            font-weight: bold;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #fb7185);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            text-shadow: 0 0 25px rgba(244, 63, 94, 0.5);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .campaign-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .duration-badge {
+            display: inline-block;
+            background: rgba(244, 63, 94, 0.15);
+            color: #ffc2d1;
+            border: 1px solid rgba(244, 63, 94, 0.4);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .last-updated {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            opacity: 0.8;
+            font-family: monospace;
+        }
+
+        /* --- 3. Tabs --- */
+        .tabs {
+            display: flex;
+            background: rgba(0,0,0,0.3);
+            padding: 5px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--tab-active-bg);
+            color: white;
+            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+        }
+
+        /* --- 4. Info Cards (Rules) --- */
+        .rules-container {
+            margin-bottom: 25px;
+        }
+
+        .rule-card {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .rule-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+        }
+
+        .rule-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rewards-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+        
+        .rewards-table th { text-align: left; padding: 8px; border-bottom: 1px solid var(--border); color: var(--text-main); }
+        .rewards-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .rewards-table tr:last-child td { border-bottom: none; }
+        
+        .note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            opacity: 0.8;
+            line-height: 1.5;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(255,255,255,0.1);
+        }
+
+        /* --- 5. Ranking List --- */
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            padding: 14px 20px;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .search-input:focus { border-color: var(--primary); }
+
+        .ranking-list { display: flex; flex-direction: column; gap: 10px; }
+
+        .rank-item {
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 15px 20px;
+            border-radius: 14px;
+            transition: transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Different status styles */
+        .rank-item.valid:hover { transform: translateY(-2px); background: var(--bg-card-hover); }
+        
+        /* Cross-board winner style (faded) */
+        .rank-item.cross-board {
+            opacity: 0.6;
+            background: rgba(0,0,0,0.3);
+            border-color: transparent;
+        }
+
+        .rank-number {
+            font-size: 1.6rem;
+            font-weight: 900;
+            width: 50px;
+            text-align: center;
+            margin-right: 15px;
+            color: var(--text-muted);
+        }
+
+        .rank-item[data-rank="1"] .rank-number { color: var(--rank-1); text-shadow: 0 0 10px rgba(251, 191, 36, 0.4); }
+        .rank-item[data-rank="2"] .rank-number { color: var(--rank-2); }
+        .rank-item[data-rank="3"] .rank-number { color: var(--rank-3); }
+
+        .user-info { flex: 1; display: flex; flex-direction: column;}
+        .username { font-weight: 700; font-size: 1.1rem; color: #fff; }
+        
+        .gift-stats { 
+            font-size: 0.75rem; 
+            color: var(--text-muted); 
+            margin-top: 4px; 
+            opacity: 0.8;
+            font-family: monospace;
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #475569;
+            color: white;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .score-display { text-align: right; min-width: 80px; }
+        .score-val { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
+        .score-label { font-size: 0.7rem; color: var(--text-muted); display: block; }
+
+        .loading, .error-msg, .empty-state { text-align: center; padding: 40px; color: var(--text-muted); }
+        .spinner {
+            width: 30px; height: 30px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .rewards-table { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="lang-switch">
+            <button class="lang-btn active" onclick="setLanguage('zh_TW')">繁體</button>
+            <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+        </div>
+        <h1 id="page-title">💖 2026 愛愛騎人節</h1>
+        <div class="subtitle" id="page-subtitle">情人節雙重排行榜</div>
+        
+        <div class="campaign-info">
+            <div class="duration-badge" id="duration-display">
+                📅 2/14 00:00 - 2/16 23:59
+            </div>
+            <div class="last-updated" id="last-updated-display"></div>
+        </div>
+    </header>
+
+    <div class="tabs">
+        <button class="tab-btn active" id="tab-warm" onclick="switchTab('warm')">
+            💋 愛慾升溫
+        </button>
+        <button class="tab-btn" id="tab-pure" onclick="switchTab('pure')">
+            💕 純情眷戀
+        </button>
+    </div>
+
+    <div class="rules-container">
+        <div class="rule-card">
+            <div class="rule-title">
+                <span>🎁 排行榜獎勵 (Rewards)</span>
+            </div>
+            <table class="rewards-table">
+                <thead>
+                    <tr>
+                        <th id="th-rank">名次</th>
+                        <th id="th-warm">💋 愛慾升溫獎勵</th>
+                        <th id="th-pure">💕 純情眷戀獎勵</th>
+                    </tr>
+                </thead>
+                <tbody id="rewards-body">
+                    </tbody>
+            </table>
+            <div class="note" id="rules-note">
+                </div>
+        </div>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="search-input" class="search-input" placeholder="搜尋主播名稱...">
+    </div>
+
+    <div id="result-container">
+        <div class="loading">
+            <div class="spinner"></div>
+            <p id="loading-text">正在計算浪漫數據...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = "https://campaign-api-618647159770.asia-east1.run.app/api/campaigns/feb26_valentine";
+    let rawData = [];
+    let currentTab = 'warm'; // 'warm' (Lust/Passion) or 'pure' (Pure Love)
+    let currentLang = 'zh_TW';
+    let lastUpdatedTime = null;
+
+    const TRANSLATIONS = {
+        zh_TW: {
+            title: "💖 2026 愛愛騎人節",
+            subtitle: "情人節雙重排行榜",
+            duration: "📅 舉辦期間 2/14 00:00 - 2/16 23:59",
+            last_updated: "更新時間",
+            tab_warm: "💋 愛慾升溫",
+            tab_pure: "💕 純情眷戀",
+            th_rank: "名次",
+            th_warm: "愛慾升溫獎項 (鑽)",
+            th_pure: "純情眷戀獎項 (鑽)",
+            search_placeholder: "搜尋主播名稱...",
+            loading: "正在計算浪漫數據...",
+            empty_search: "找不到符合條件的主播",
+            score_unit: "套",
+            cross_board_label: "已於他榜獲獎",
+            gift_label_warm: "摩鐵 / 甜舔",
+            gift_label_pure: "約會 / 愛神",
+            rewards: [
+                { rank: "1", warm: "2,270,690", pure: "2,021,314" },
+                { rank: "2", warm: "1,769,520", pure: "1,314,520" },
+                { rank: "3", warm: "942,069", pure: "594,720" }
+            ],
+            note_html: `
+                • 排名採計「完整套數」 (取兩者最小值)。<br>
+                • 同一主播不可重複領獎，若同時上榜，以獲鑽較多者為準。<br>
+                • 💋 指定：摩鐵聊聊天 + 只給妳甜舔<br>
+                • 💕 指定：浪漫約會 + 愛神の箭
+            `
+        },
+        en: {
+            title: "💖 2026 Valentine's",
+            subtitle: "Double Leaderboard Event",
+            duration: "📅 Duration: Feb 14 - Feb 16",
+            last_updated: "Last Updated",
+            tab_warm: "💋 Passion Heat",
+            tab_pure: "💕 Pure Love",
+            th_rank: "Rank",
+            th_warm: "Passion Reward",
+            th_pure: "Pure Reward",
+            search_placeholder: "Search username...",
+            loading: "Calculating romance...",
+            empty_search: "No streamers found.",
+            score_unit: "Sets",
+            cross_board_label: "Awarded in other board",
+            gift_label_warm: "Motel / Lick",
+            gift_label_pure: "Date / Arrow",
+            rewards: [
+                { rank: "1st", warm: "2,270,690", pure: "2,021,314" },
+                { rank: "2nd", warm: "1,769,520", pure: "1,314,520" },
+                { rank: "3rd", warm: "942,069", pure: "594,720" }
+            ],
+            note_html: `
+                • Ranking based on "Complete Sets".<br>
+                • Rewards are non-cumulative. Higher value reward takes precedence.<br>
+                • 💋 Set: Motel Chat + Lick Only<br>
+                • 💕 Set: Romantic Date + Cupid's Arrow
+            `
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        setLanguage('zh_TW');
+        fetchData();
+        document.getElementById('search-input').addEventListener('input', renderList);
+    });
+
+    function switchTab(tab) {
+        currentTab = tab;
+        document.getElementById('tab-warm').classList.toggle('active', tab === 'warm');
+        document.getElementById('tab-pure').classList.toggle('active', tab === 'pure');
+        renderList();
+    }
+
+    async function fetchData() {
+        const resultContainer = document.getElementById('result-container');
+        try {
+            const response = await fetch(`${API_URL}?t=${new Date().getTime()}`, {
+                method: 'GET',
+                credentials: 'omit',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (!response.ok) throw new Error("API Error");
+            
+            const json = await response.json();
+            rawData = Array.isArray(json) ? json : (json.data || []);
+
+            lastUpdatedTime = new Date();
+            updateTimeDisplay();
+            renderList();
+
+        } catch (error) {
+            console.error(error);
+            resultContainer.innerHTML = `<div class="error-msg">無法讀取數據 (API Error)</div>`;
+        }
+    }
+
+    function renderList() {
+        const container = document.getElementById('result-container');
+        const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+        const t = TRANSLATIONS[currentLang];
+        const isWarm = currentTab === 'warm';
+
+        // 1. Filter
+        let filtered = rawData.filter(item => (item.username || "").toLowerCase().includes(searchTerm));
+
+        // 2. Sort Logic (Use API provided ranks: warm_rank / pure_rank)
+        // If rank is missing/null, put them at bottom
+        filtered.sort((a, b) => {
+            const rankA = isWarm ? (a.warm_rank || 9999) : (a.pure_rank || 9999);
+            const rankB = isWarm ? (b.warm_rank || 9999) : (b.pure_rank || 9999);
+            return rankA - rankB;
+        });
+
+        if (filtered.length === 0) {
+            container.innerHTML = `<div class="empty-state">${t.empty_search}</div>`;
+            return;
+        }
+
+        let html = '<div class="ranking-list">';
+        
+        filtered.forEach(item => {
+            // Mapping fields based on API JSON
+            // Warm tab: warm_rank, set_cnt_warm, warm_rank_final
+            // Pure tab: pure_rank, set_cnt_pure, pure_rank_final
+            
+            const rawRank = isWarm ? item.warm_rank : item.pure_rank;
+            const score = isWarm ? item.set_cnt_warm : item.set_cnt_pure;
+            const finalRankStatus = isWarm ? item.warm_rank_final : item.pure_rank_final;
+            
+            // Detail counts (Mock visual, using API data)
+            // Warm set: cnt_motel + cnt_marshmallow (Note: Prompt said marshmallow is "只給妳甜舔")
+            // Pure set: cnt_dating + cnt_arrow
+            const details = isWarm 
+                ? `${t.gift_label_warm}: ${item.cnt_motel || 0} / ${item.cnt_marshmallow || 0}`
+                : `${t.gift_label_pure}: ${item.cnt_dating || 0} / ${item.cnt_arrow || 0}`;
+
+            // Cross-board logic:
+            // If finalRankStatus contains non-numeric chars (like "另榜得名"), it means they won elsewhere.
+            // We still show their rank number, but dim the row.
+            const isNumericRank = !isNaN(finalRankStatus); // "1" is true, "另榜..." is false
+            const rowClass = isNumericRank ? "valid" : "cross-board";
+            const rankDisplay = rawRank || "-";
+
+            html += `
+                <div class="rank-item ${rowClass}" data-rank="${rankDisplay}">
+                    <div class="rank-number">${rankDisplay}</div>
+                    <div class="user-info">
+                        <span class="username">
+                            ${item.username}
+                            ${!isNumericRank ? `<span class="status-badge">${t.cross_board_label}</span>` : ''}
+                        </span>
+                        <div class="gift-stats">${details}</div>
+                    </div>
+                    <div class="score-display">
+                        <div class="score-val">${score}</div>
+                        <span class="score-label">${t.score_unit}</span>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    function setLanguage(lang) {
+        currentLang = lang;
+        const t = TRANSLATIONS[lang];
+
+        document.getElementById('page-title').textContent = t.title;
+        document.getElementById('page-subtitle').textContent = t.subtitle;
+        document.getElementById('duration-display').textContent = t.duration;
+        document.getElementById('tab-warm').textContent = t.tab_warm;
+        document.getElementById('tab-pure').textContent = t.tab_pure;
+        
+        document.getElementById('th-rank').textContent = t.th_rank;
+        document.getElementById('th-warm').textContent = t.th_warm;
+        document.getElementById('th-pure').textContent = t.th_pure;
+        
+        document.getElementById('search-input').placeholder = t.search_placeholder;
+        document.getElementById('loading-text').textContent = t.loading;
+        document.getElementById('rules-note').innerHTML = t.note_html;
+
+        const tbody = document.getElementById('rewards-body');
+        tbody.innerHTML = t.rewards.map(r => `
+            <tr>
+                <td>${r.rank}</td>
+                <td style="color:#fb7185; font-weight:bold;">${r.warm}</td>
+                <td style="color:#f472b6; font-weight:bold;">${r.pure}</td>
+            </tr>
+        `).join('');
+
+        updateTimeDisplay();
+        
+        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+        if(lang === 'zh_TW') document.querySelector('button[onclick="setLanguage(\'zh_TW\')"]').classList.add('active');
+        if(lang === 'en') document.querySelector('button[onclick="setLanguage(\'en\')"]').classList.add('active');
+
+        if(rawData.length > 0) renderList();
+    }
+
+    function updateTimeDisplay() {
+        if (!lastUpdatedTime) return;
+        const t = TRANSLATIONS[currentLang];
+        const str = lastUpdatedTime.toLocaleString('zh-TW', { hour12: false });
+        document.getElementById('last-updated-display').textContent = `${t.last_updated}: ${str}`;
+    }
+</script>
+
+</body>
+</html>
